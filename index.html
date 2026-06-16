@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ultimate Mind Reader Game - A feature-rich interactive web game utilizing binary search algorithm logic to read your mind. Play it on Chrome and experience the magic!">
+    <title>Ultimate Mind Reader - Interactive Magic Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Canvas for Confetti particle effects -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <main class="container">
+        <!-- Main Wrapper Panel -->
+        <div class="panel glow-primary">
+            
+            <!-- VIEW 1: Landing / Name Entry -->
+            <section id="view-landing" class="view active">
+                <h1 class="gradient-text">Ultimate Mind Reader</h1>
+                <p>Step into the domain of logic and telepathy. Select a category, keep a secret choice in your mind, and answer a few simple questions. The computer will read your mind!</p>
+                
+                <div class="input-group">
+                    <label for="name-input" class="input-label">Enter your name to begin</label>
+                    <input type="text" id="name-input" class="input-field" placeholder="Enter name (e.g. Ahmad)" maxlength="20" autocomplete="off">
+                </div>
+                
+                <button id="btn-start" class="btn btn-primary" id="btn-start-adventure">
+                    <span>Start Adventure</span>
+                    <span class="btn-icon">🔮</span>
+                </button>
+            </section>
+
+            <!-- VIEW 2: Dashboard / Mode Selection -->
+            <section id="view-dashboard" class="view">
+                <header>
+                    <h1 class="gradient-text" style="font-size: 1.8rem; margin-bottom: 5px;">Ultimate Mind Reader</h1>
+                    <h2 id="dashboard-welcome">Welcome, Explorer! ✨</h2>
+                </header>
+                <p>Choose a category below to test my telepathic binary skills:</p>
+                
+                <!-- Game Modes Grid -->
+                <div id="dashboard-grid" class="mode-grid">
+                    <!-- JavaScript dynamically builds cards here -->
+                </div>
+
+                <!-- Auxiliary Actions (Zodiac & History) -->
+                <div class="dash-actions">
+                    <button id="btn-goto-zodiac" class="btn btn-secondary">
+                        <span class="btn-icon">🌌</span>
+                        <span>Zodiac Sign</span>
+                    </button>
+                    <button id="btn-goto-history" class="btn btn-secondary">
+                        <span class="btn-icon">📜</span>
+                        <span>My History</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- VIEW 3: Active Game Screen -->
+            <section id="view-game" class="view">
+                <header>
+                    <h2 id="game-instruction" class="gradient-text" style="font-size: 1.5rem;">Choose a Value</h2>
+                    <p style="margin-top: 5px; font-size: 0.95rem;">Keep your choice in mind and answer honestly!</p>
+                </header>
+
+                <!-- 1-100 Preview List (for number/age modes to help the user choose) -->
+                <div id="number-grid-preview" class="game-progress" style="display: none;">
+                    <div class="progress-labels">
+                        <span style="font-weight: 500; color: var(--text-main);">Grid Reference (1-100)</span>
+                    </div>
+                    <div class="number-grid-container">
+                        <div id="preview-grid-content" class="number-grid"></div>
+                    </div>
+                </div>
+
+                <!-- Progress Tracker -->
+                <div class="game-progress">
+                    <div class="progress-labels">
+                        <span id="progress-text">Card 1 of 7</span>
+                        <span>Telepathy Active</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div id="progress-fill" class="progress-bar-fill"></div>
+                    </div>
+                </div>
+
+                <!-- Interactive Card -->
+                <div class="card-wrapper">
+                    <div class="magic-card">
+                        <div class="card-title">Check This Card</div>
+                        <div class="card-elements-scroller">
+                            <div id="card-elements-content" class="card-elements">
+                                <!-- Card contents populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p style="font-size: 1.05rem; font-weight: 500; color: var(--text-main); margin-bottom: -10px;">Is your chosen item in the card above?</p>
+
+                <!-- Yes/No Binary Choice Buttons -->
+                <div class="choice-container">
+                    <button id="btn-yes" class="btn btn-yes">
+                        <span class="btn-icon">✓</span>
+                        <span>YES, IT IS HERE</span>
+                    </button>
+                    <button id="btn-no" class="btn btn-no">
+                        <span class="btn-icon">✗</span>
+                        <span>NO, IT IS NOT</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- VIEW 4: Scanning / Suspense Transition -->
+            <section id="view-scanning" class="view">
+                <div class="scanning-body">
+                    <div class="brain-scanner">
+                        <div class="scanner-ring"></div>
+                        <span class="scanner-icon">🔮</span>
+                    </div>
+                    <h2 class="gradient-text">Reading Your Mind...</h2>
+                    <div id="scanning-status" class="status-text">Aligning cosmic frequencies...</div>
+                </div>
+            </section>
+
+            <!-- VIEW 5: Result / Guess Reveal -->
+            <section id="view-result" class="view">
+                <header>
+                    <h2 class="gradient-text">Mind Read Successful!</h2>
+                    <h3 id="result-mode-title" style="color: var(--text-muted); font-size: 1.1rem; font-weight: 500; margin-top: 5px;">Number (1-100)</h3>
+                </header>
+
+                <div class="reveal-circle-wrapper">
+                    <div class="reveal-circle">
+                        <div id="result-val" class="reveal-value">42</div>
+                    </div>
+                </div>
+
+                <p id="result-subtext" style="font-size: 1.1rem; font-weight: 500; color: var(--text-main);"></p>
+
+                <!-- Feedback Buttons -->
+                <div id="feedback-box" class="feedback-row">
+                    <button id="btn-result-right" class="btn btn-yes btn-thumb">
+                        <span>Yes, You Got It! 😊</span>
+                    </button>
+                    <button id="btn-result-wrong" class="btn btn-no btn-thumb">
+                        <span>No, That's Wrong 😢</span>
+                    </button>
+                </div>
+
+                <!-- Success Banner (hidden initially) -->
+                <div id="save-success" class="success-banner" style="display: none;"></div>
+
+                <button id="btn-restart" class="btn btn-primary" style="margin-top: 10px;">
+                    <span class="btn-icon">🔄</span>
+                    <span>Play Another Mode</span>
+                </button>
+            </section>
+
+            <!-- VIEW 6: Zodiac Sign Calculator -->
+            <section id="view-zodiac" class="view">
+                <header>
+                    <h1 class="gradient-text" style="font-size: 1.8rem; margin-bottom: 5px;">Zodiac Sign Calculator</h1>
+                    <p>Enter your birth date and month to find your astrological sign.</p>
+                </header>
+
+                <div class="zodiac-grid">
+                    <div class="input-group">
+                        <label for="zodiac-month" class="input-label">Birth Month</label>
+                        <select id="zodiac-month" class="input-field" style="background: rgba(25, 25, 35, 0.9);">
+                            <option value="" disabled selected>Select Month</option>
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="zodiac-day" class="input-label">Birth Day</label>
+                        <input type="number" id="zodiac-day" class="input-field" min="1" max="31" placeholder="Day (e.g. 15)" autocomplete="off">
+                    </div>
+                </div>
+
+                <button id="btn-calculate-zodiac" class="btn btn-accent">
+                    <span class="btn-icon">✨</span>
+                    <span>Calculate Sign</span>
+                </button>
+
+                <!-- Zodiac Sign Result Box -->
+                <div id="zodiac-result-container" class="zodiac-result-box">
+                    <div style="font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Your Celestial Sign</div>
+                    <div id="zodiac-sign-val" class="zodiac-sign-name">♎ Libra</div>
+                </div>
+
+                <button id="btn-zodiac-back" class="btn btn-secondary" style="margin-top: 15px;">
+                    <span class="btn-icon">←</span>
+                    <span>Back to Dashboard</span>
+                </button>
+            </section>
+
+            <!-- VIEW 7: History Log View -->
+            <section id="view-history" class="view">
+                <header>
+                    <h1 class="gradient-text" style="font-size: 1.8rem; margin-bottom: 5px;">Telepathic History</h1>
+                    <p>Recent telepathic readings stored locally in this device's memory banks.</p>
+                </header>
+
+                <div id="history-list-content" class="history-list">
+                    <!-- Populated dynamically by JS -->
+                </div>
+
+                <div style="display: flex; gap: 15px; width: 100%; margin-top: 15px;">
+                    <button id="btn-history-back" class="btn btn-secondary" style="flex: 1;">
+                        <span class="btn-icon">←</span>
+                        <span>Back</span>
+                    </button>
+                    <button id="btn-clear-history" class="btn btn-no" style="flex: 1; padding: 16px 20px;">
+                        <span class="btn-icon">🗑️</span>
+                        <span>Clear History</span>
+                    </button>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
